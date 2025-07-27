@@ -1,0 +1,1867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounting Quiz</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #c0392b;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .quiz-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .quiz-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+
+        .question-count {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 15px;
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .answers {
+            margin-bottom: 25px;
+        }
+
+        .answer-item {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 12px;
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+            font-size: 1.1rem;
+        }
+
+        .answer-item:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .answer-item.selected {
+            background-color: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: var(--transition);
+            box-shadow: var(--box-shadow);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-prev {
+            background-color: #95a5a6;
+            color: white;
+        }
+
+        .btn-prev:hover:not(:disabled) {
+            background-color: #7f8c8d;
+        }
+
+        .btn-next, .btn-submit {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .btn-next:hover:not(:disabled), .btn-submit:hover:not(:disabled) {
+            background-color: #2980b9;
+        }
+
+        .btn-submit {
+            background-color: var(--success-color);
+        }
+
+        .btn-submit:hover:not(:disabled) {
+            background-color: #219653;
+        }
+
+        .result-container {
+            display: none;
+            background-color: white;
+            padding: 40px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+        }
+
+        .result-container h2 {
+            color: var(--success-color);
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+        }
+
+        .score {
+            font-size: 5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin: 20px 0;
+        }
+
+        .feedback {
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+        }
+
+        .btn-restart {
+            background-color: var(--warning-color);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+        }
+
+        .btn-restart:hover {
+            background-color: #e67e22;
+        }
+
+        .explanation {
+            background-color: #e3f2fd;
+            border-left: 5px solid var(--secondary-color);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
+            text-align: left;
+            display: none; /* Hidden by default */
+        }
+
+        .explanation.show {
+            display: block; /* Shown after answering */
+        }
+
+        .correct-answer {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .incorrect-answer {
+            color: var(--accent-color);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .quiz-container, .result-container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .question-text {
+                font-size: 1.2rem;
+            }
+
+            .btn-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Accounting Fundamentals Quiz</h1>
+            <p>Test your knowledge of basic accounting principles</p>
+        </header>
+
+        <div class="quiz-info">
+            <div>Total Questions: <span id="total-questions">150</span></div>
+            <div>Questions to Attempt: <span id="questions-to-attempt">10</span></div>
+        </div>
+
+        <main class="quiz-container" id="quiz">
+            <div class="question-count" id="question-count">Question 1 of 10</div>
+            <div class="question-text" id="question-text">Loading question...</div>
+            
+            <div class="answers" id="answers">
+                <!-- Answers will be populated by JavaScript -->
+            </div>
+            
+            <div class="explanation" id="explanation">
+                <p><strong>Explanation:</strong> <span id="explanation-text"></span></p>
+                <p id="correct-answer-text"></p>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn btn-prev" id="prev-btn" disabled>Previous</button>
+                <button class="btn btn-next" id="next-btn">Next</button>
+                <button class="btn btn-submit" id="submit-btn" style="display:none;">Submit Quiz</button>
+            </div>
+        </main>
+
+        <div class="result-container" id="result">
+            <h2>Quiz Completed!</h2>
+            <div class="score" id="score">0</div>
+            <div class="feedback" id="feedback"></div>
+            <p>You answered <span id="correct-answers">0</span> out of <span id="total-answered">0</span> questions correctly.</p>
+            <button class="btn btn-restart" id="restart-btn">Restart Quiz</button>
+        </div>
+
+        <footer>
+            <p>Accounting Quiz Application &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        // Full set of 150 MCQs
+        const quizData = [
+            {
+                question: "What is the primary purpose of accounting?",
+                options: [
+                    "To calculate taxes",
+                    "To record personal expenses",
+                    "To communicate financial information to stakeholders",
+                    "To manage employee salaries"
+                ],
+                answer: "To communicate financial information to stakeholders",
+                explanation: "Accounting's main goal is to systematically record, summarize, and report financial transactions to provide information about a business's performance and position to interested parties (stakeholders)."
+            },
+            {
+                question: "Which of the following is NOT a main branch or type of accounting mentioned in basic principles?",
+                options: [
+                    "Financial Accounting",
+                    "Management Accounting",
+                    "Tax Accounting",
+                    "Astrological Accounting"
+                ],
+                answer: "Astrological Accounting",
+                explanation: "Financial, Management, and Tax Accounting are recognized branches. Astrological Accounting is not a standard branch."
+            },
+            {
+                question: "Accounting records transactions in terms of:",
+                options: ["Units produced", "Hours worked", "Money", "Employee satisfaction"],
+                answer: "Money",
+                explanation: "Accounting measures and records business transactions primarily in monetary terms (currency)."
+            },
+            {
+                question: "Which of the following best describes the process of summarizing in accounting?",
+                options: [
+                    "Recording transactions in a journal",
+                    "Grouping similar transactions in ledgers",
+                    "Preparing financial statements from ledger balances",
+                    "Analyzing market trends"
+                ],
+                answer: "Preparing financial statements from ledger balances",
+                explanation: "Summarizing involves consolidating the classified data (from ledgers) into financial statements like the Profit & Loss Account and Balance Sheet."
+            },
+            {
+                question: "The accounting process involves several steps. Which sequence is generally correct?",
+                options: [
+                    "Classification -> Recording -> Summarization -> Presentation",
+                    "Recording -> Classification -> Summarization -> Presentation",
+                    "Presentation -> Recording -> Classification -> Summarization",
+                    "Summarization -> Classification -> Recording -> Presentation"
+                ],
+                answer: "Recording -> Classification -> Summarization -> Presentation",
+                explanation: "The standard accounting cycle starts with recording transactions (Journal), then classifying them (Ledger), summarizing the data (Trial Balance, Financial Statements), and finally presenting the results (Financial Statements)."
+            },
+            {
+                question: "Who are considered external users of accounting information?",
+                options: ["Managers", "Employees", "Creditors and Investors", "Internal Auditors"],
+                answer: "Creditors and Investors",
+                explanation: "External users are outside the organization and include creditors (who lend money), investors (shareholders), government agencies, and the public. Managers and employees are typically internal users."
+            },
+            {
+                question: "Which of the following is an example of a business transaction?",
+                options: [
+                    "An employee's personal phone call",
+                    "A discussion about future marketing strategies",
+                    "Purchasing goods on credit",
+                    "A manager's lunch break"
+                ],
+                answer: "Purchasing goods on credit",
+                explanation: "A business transaction is an economic event that affects the financial position of the business and can be measured reliably. Buying goods on credit impacts assets (inventory) and liabilities (creditors)."
+            },
+            {
+                question: "What is the main output of the accounting process?",
+                options: ["Employee handbook", "Financial statements", "Marketing plan", "Production schedule"],
+                answer: "Financial statements",
+                explanation: "The culmination of the accounting process (recording, classifying, summarizing) is the preparation of financial statements (Income Statement, Balance Sheet, Cash Flow Statement) for presentation."
+            },
+            {
+                question: "Accounting principles are primarily designed to ensure:",
+                options: [
+                    "Maximum profit for owners",
+                    "Minimum tax liability",
+                    "Consistency and comparability of financial information",
+                    "Simplification of bookkeeping tasks"
+                ],
+                answer: "Consistency and comparability of financial information",
+                explanation: "Accounting principles (like GAAP/IFRS) provide a framework to ensure that financial statements are prepared consistently over time and are comparable between different companies."
+            },
+            {
+                question: "Accounting can be classified as:",
+                options: ["A Natural Science", "A Social Science", "An Art", "A Purely Mathematical Discipline"],
+                answer: "An Art",
+                explanation: "The provided text defines accounting as \"the art of Recording, Classification, Summarization, Presentation...\" suggesting it involves skill and technique."
+            },
+            {
+                question: "The process of keeping systematic records of business transactions is primarily aimed at:",
+                options: [
+                    "Providing data for daily operational decisions",
+                    "Ensuring compliance with internal office rules",
+                    "Maintaining a permanent record for financial reporting",
+                    "Tracking employee attendance"
+                ],
+                answer: "Maintaining a permanent record for financial reporting",
+                explanation: "Systematic record-keeping is fundamental to accurately preparing financial statements that reflect the true financial position and performance of the business."
+            },
+            {
+                question: "Which financial statement shows the financial position of a business at a specific point in time?",
+                options: ["Income Statement", "Cash Flow Statement", "Balance Sheet", "Statement of Changes in Equity"],
+                answer: "Balance Sheet",
+                explanation: "The Balance Sheet presents the assets, liabilities, and owner's equity of a business at a particular date, showing its financial position."
+            },
+            {
+                question: "The main objective of book-keeping is:",
+                options: [
+                    "To interpret financial results",
+                    "To record financial transactions systematically",
+                    "To forecast future business performance",
+                    "To audit financial statements"
+                ],
+                answer: "To record financial transactions systematically",
+                explanation: "Book-keeping is the foundational part of accounting focused on the accurate and systematic recording of financial transactions."
+            },
+            {
+                question: "Financial accounting primarily serves the information needs of:",
+                options: ["Internal management", "Government regulators", "External parties like shareholders and creditors", "Production supervisors"],
+                answer: "External parties like shareholders and creditors",
+                explanation: "Financial accounting is geared towards providing general-purpose financial information to external users who need to assess the company's performance and financial health."
+            },
+            {
+                question: "Which of the following is a characteristic of accounting information?",
+                options: ["Subjectivity", "Relevance", "Opinions of managers", "Based on future predictions"],
+                answer: "Relevance",
+                explanation: "Good accounting information should be relevant to the decision-making needs of its users. It should also be reliable, comparable, and understandable."
+            },
+            {
+                question: "The term \"Going Concern\" implies that:",
+                options: [
+                    "The business is highly profitable",
+                    "The business will cease operations soon",
+                    "The business is expected to continue operating indefinitely",
+                    "The business is a new start-up"
+                ],
+                answer: "The business is expected to continue operating indefinitely",
+                explanation: "The Going Concern concept assumes the business will continue its operations into the foreseeable future and will not liquidate."
+            },
+            {
+                question: "Which accounting concept requires that revenues and expenses related to the same period be matched?",
+                options: ["Cost Concept", "Matching Concept", "Conservatism Concept", "Business Entity Concept"],
+                answer: "Matching Concept",
+                explanation: "The Matching Concept dictates that expenses incurred to earn revenue in a specific period should be recognized in that same period, regardless of when cash is paid."
+            },
+            {
+                question: "According to the Business Entity Concept:",
+                options: [
+                    "The business owner's personal assets are part of the business",
+                    "The business is treated as a separate entity from its owners",
+                    "Only large businesses need separate accounting records",
+                    "The business must always make a profit"
+                ],
+                answer: "The business is treated as a separate entity from its owners",
+                explanation: "This concept states that the business's transactions are recorded separately from the personal transactions of its owners."
+            },
+            {
+                question: "The Cost Concept states that assets should generally be recorded at:",
+                options: ["Their current market value", "Their replacement cost", "Their historical cost", "Their net realizable value"],
+                answer: "Their historical cost",
+                explanation: "Under the Cost Concept (Historical Cost Principle), assets are initially recorded at the amount paid to acquire them."
+            },
+            {
+                question: "The Conservatism Concept suggests that accountants should:",
+                options: [
+                    "Always report the highest possible profit",
+                    "Anticipate profits but not losses",
+                    "Anticipate losses but not profits",
+                    "Ignore potential risks"
+                ],
+                answer: "Anticipate losses but not profits",
+                explanation: "Conservatism (Prudence) means recognizing potential losses and expenses as soon as they are probable and reasonably estimable, but not recognizing potential gains until they are realized."
+            },
+            {
+                question: "The fundamental accounting equation is:",
+                options: [
+                    "Assets + Liabilities = Capital",
+                    "Assets - Capital = Liabilities",
+                    "Assets = Liabilities + Capital",
+                    "Capital = Assets + Liabilities"
+                ],
+                answer: "Assets = Liabilities + Capital",
+                explanation: "This equation is the foundation of the double-entry system. It must always be in balance."
+            },
+            {
+                question: "If a business purchases equipment for cash, what happens to the accounting equation?",
+                options: [
+                    "Assets increase; Liabilities increase",
+                    "Assets increase; Capital increases",
+                    "One asset increases, another asset decreases",
+                    "Assets decrease; Liabilities decrease"
+                ],
+                answer: "One asset increases, another asset decreases",
+                explanation: "Equipment (Asset) increases, Cash (Asset) decreases. Total Assets remain the same. Liabilities and Capital are unaffected."
+            },
+            {
+                question: "When a business receives cash from a customer for services rendered, which elements of the accounting equation are affected?",
+                options: [
+                    "Assets increase; Liabilities increase",
+                    "Assets increase; Capital increases",
+                    "Assets decrease; Capital decreases",
+                    "Liabilities decrease; Capital increases"
+                ],
+                answer: "Assets increase; Capital increases",
+                explanation: "Cash (Asset) increases. Revenue increases Profit, which increases Capital (Owner's Equity)."
+            },
+            {
+                question: "If a business borrows money from a bank, how does the accounting equation change?",
+                options: [
+                    "Assets increase; Liabilities increase",
+                    "Assets increase; Capital increases",
+                    "Assets decrease; Liabilities decrease",
+                    "Liabilities increase; Capital decreases"
+                ],
+                answer: "Assets increase; Liabilities increase",
+                explanation: "Cash/Bank (Asset) increases. Loan Payable/Bank Loan (Liability) increases. Capital is unaffected."
+            },
+            {
+                question: "Owner's equity (Capital) can be increased by:",
+                options: ["Incurring expenses", "Paying liabilities", "Earning revenues/profit", "Purchasing assets with cash"],
+                answer: "Earning revenues/profit",
+                explanation: "Profit (revenue minus expenses) increases the owner's claim on the assets (Capital). Paying liabilities decreases assets and liabilities equally. Purchasing assets with cash swaps one asset for another."
+            },
+            {
+                question: "Which transaction would decrease both assets and owner's equity?",
+                options: [
+                    "Providing services on credit",
+                    "Paying a supplier for previous purchases",
+                    "Owner withdrawing cash for personal use (Drawing)",
+                    "Receiving cash from a bank loan"
+                ],
+                answer: "Owner withdrawing cash for personal use (Drawing)",
+                explanation: "Cash (Asset) decreases. Drawing (deducted from Capital) decreases Owner's Equity. Paying a supplier decreases Cash (Asset) and Accounts Payable (Liability)."
+            },
+            {
+                question: "If total assets are Rs. 100,000 and total liabilities are Rs. 40,000, what is the owner's equity?",
+                options: ["Rs. 140,000", "Rs. 60,000", "Rs. 40,000", "Rs. 100,000"],
+                answer: "Rs. 60,000",
+                explanation: "Using Assets = Liabilities + Capital -> 100,000 = 40,000 + Capital -> Capital = 60,000."
+            },
+            {
+                question: "Buying goods for cash affects which part of the accounting equation?",
+                options: ["Assets only", "Liabilities only", "Capital only", "Both assets and liabilities"],
+                answer: "Assets only",
+                explanation: "Inventory/Stock (Asset) increases, Cash (Asset) decreases. Total Assets remain the same. Liabilities and Capital are unaffected."
+            },
+            {
+                question: "Paying an expense in cash affects the accounting equation by:",
+                options: [
+                    "Increasing assets and decreasing capital",
+                    "Decreasing assets and decreasing capital",
+                    "Decreasing liabilities and increasing capital",
+                    "Increasing liabilities and decreasing assets"
+                ],
+                answer: "Decreasing assets and decreasing capital",
+                explanation: "Cash (Asset) decreases. Expense decreases Profit, which decreases Capital (Owner's Equity)."
+            },
+            {
+                question: "Receiving an invoice for utilities used but not yet paid affects the accounting equation by:",
+                options: [
+                    "Increasing assets and increasing liabilities",
+                    "Increasing liabilities and decreasing capital",
+                    "Decreasing assets and decreasing liabilities",
+                    "Having no effect until payment is made"
+                ],
+                answer: "Increasing liabilities and decreasing capital",
+                explanation: "Utility Expense (decreases Profit, thus Capital) increases. Accounts Payable/Outstanding Expense (Liability) increases. Assets are unaffected initially."
+            },
+            {
+                question: "The double-entry system of book-keeping means:",
+                options: [
+                    "Every transaction is recorded twice in the same account",
+                    "Every transaction affects two or more accounts, with equal debits and credits",
+                    "Two accountants must approve every transaction",
+                    "Entries are made in two different currencies"
+                ],
+                answer: "Every transaction affects two or more accounts, with equal debits and credits",
+                explanation: "The core principle is that for every debit entry, there must be a corresponding and equal credit entry, ensuring the accounting equation remains balanced."
+            },
+            {
+                question: "In the double-entry system, the total of debit balances must always equal:",
+                options: ["The total of credit balances", "Total assets", "Total liabilities", "Total revenue"],
+                answer: "The total of credit balances",
+                explanation: "This is a fundamental check for arithmetical accuracy in the ledger and trial balance preparation."
+            },
+            {
+                question: "What does \"Debit\" (Dr.) signify in accounting terms?",
+                options: [
+                    "An increase in liability",
+                    "An increase in capital",
+                    "An increase in assets or expense, or a decrease in liability or capital/income",
+                    "A decrease in assets"
+                ],
+                answer: "An increase in assets or expense, or a decrease in liability or capital/income",
+                explanation: "The modern rule for Debit: Increases assets and expenses; decreases liabilities, capital, and income."
+            },
+            {
+                question: "What does \"Credit\" (Cr.) signify in accounting terms?",
+                options: [
+                    "An increase in assets",
+                    "An increase in expenses",
+                    "An increase in liabilities or capital/income, or a decrease in assets or expense",
+                    "A decrease in liabilities"
+                ],
+                answer: "An increase in liabilities or capital/income, or a decrease in assets or expense",
+                explanation: "The modern rule for Credit: Increases liabilities, capital, and income; decreases assets and expenses."
+            },
+            {
+                question: "According to the traditional approach (\"Golden Rules\"), which account type follows the rule: \"Debit the Receiver, Credit the Giver\"?",
+                options: ["Real Accounts", "Nominal Accounts", "Personal Accounts", "All accounts"],
+                answer: "Personal Accounts",
+                explanation: "This is the Golden Rule for Personal Accounts (Persons, companies, entities with whom the business deals)."
+            },
+            {
+                question: "The \"Golden Rule\" for Real Accounts is:",
+                options: [
+                    "Debit the Receiver, Credit the Giver",
+                    "Debit all Expenses & Losses, Credit all Incomes & Gains",
+                    "Debit what comes in, Credit what goes out",
+                    "Debit the Buyer, Credit the Seller"
+                ],
+                answer: "Debit what comes in, Credit what goes out",
+                explanation: "This rule applies to Real Accounts (tangible and intangible assets the business owns or controls)."
+            },
+            {
+                question: "The \"Golden Rule\" for Nominal Accounts is:",
+                options: [
+                    "Debit the Receiver, Credit the Giver",
+                    "Debit all Expenses & Losses, Credit all Incomes & Gains",
+                    "Debit what comes in, Credit what goes out",
+                    "Debit the Buyer, Credit the Seller"
+                ],
+                answer: "Debit all Expenses & Losses, Credit all Incomes & Gains",
+                explanation: "This rule applies to Nominal Accounts (Income, Expenses, Gains, Losses - items reported in the Profit & Loss Account)."
+            },
+            {
+                question: "When a business pays rent by cheque, the correct double-entry is:",
+                options: [
+                    "Debit Cash, Credit Rent",
+                    "Debit Rent, Credit Bank",
+                    "Debit Bank, Credit Rent",
+                    "Debit Rent, Credit Cash"
+                ],
+                answer: "Debit Rent, Credit Bank",
+                explanation: "Rent Expense increases (Debit). Bank/Cash decreases (Credit)."
+            },
+            {
+                question: "When goods are sold on credit, which accounts are affected?",
+                options: [
+                    "Cash and Sales",
+                    "Accounts Receivable and Sales",
+                    "Purchases and Accounts Payable",
+                    "Bank and Capital"
+                ],
+                answer: "Accounts Receivable and Sales",
+                explanation: "Accounts Receivable/Debtors (Asset) increases (Debit). Sales/Revenue (Income) increases (Credit)."
+            },
+            {
+                question: "Purchasing office supplies with cash involves:",
+                options: [
+                    "Debiting Office Supplies, Crediting Cash",
+                    "Debiting Cash, Crediting Office Supplies",
+                    "Debiting Office Expenses, Crediting Cash",
+                    "Debiting Capital, Crediting Cash"
+                ],
+                answer: "Debiting Office Supplies, Crediting Cash",
+                explanation: "Office Supplies (Asset) increases (Debit), Cash (Asset) decreases (Credit)."
+            },
+            {
+                question: "Receiving cash from a debtor settles the account. The entry is:",
+                options: [
+                    "Debit Cash, Credit Accounts Receivable",
+                    "Debit Accounts Receivable, Credit Cash",
+                    "Debit Sales, Credit Cash",
+                    "Debit Capital, Credit Cash"
+                ],
+                answer: "Debit Cash, Credit Accounts Receivable",
+                explanation: "Cash (Asset) increases (Debit). Accounts Receivable/Debtors (Asset) decreases (Credit)."
+            },
+            {
+                question: "Introducing additional capital in the form of cash into the business requires:",
+                options: [
+                    "Debiting Cash, Crediting Capital",
+                    "Debiting Capital, Crediting Cash",
+                    "Debiting Bank Loan, Crediting Cash",
+                    "Debiting Drawings, Crediting Cash"
+                ],
+                answer: "Debiting Cash, Crediting Capital",
+                explanation: "Cash/Bank (Asset) increases (Debit). Capital (Owner's Equity) increases (Credit)."
+            },
+            {
+                question: "Paying salaries to employees reduces:",
+                options: [
+                    "Assets and increases liabilities",
+                    "Assets and decreases capital",
+                    "Liabilities and increases expenses",
+                    "Capital and increases liabilities"
+                ],
+                answer: "Assets and decreases capital",
+                explanation: "Cash/Bank (Asset) decreases (Credit). Salaries Expense (Expense) increases, decreasing Profit and thus Capital (Debit)."
+            },
+            {
+                question: "If a company buys a vehicle by paying partly in cash and signing a promissory note, the entry includes:",
+                options: [
+                    "Debit Vehicle; Credit Cash and Notes Payable",
+                    "Debit Cash and Notes Payable; Credit Vehicle",
+                    "Debit Vehicle and Cash; Credit Notes Payable",
+                    "Debit Notes Payable; Credit Vehicle and Cash"
+                ],
+                answer: "Debit Vehicle; Credit Cash and Notes Payable",
+                explanation: "Vehicle (Asset) increases (Debit). Cash (Asset) decreases (Credit). Notes Payable (Liability) increases (Credit)."
+            },
+            {
+                question: "When a business incurs an expense but hasn't paid for it yet, the correct entry is:",
+                options: [
+                    "Debit Expense, Credit Cash",
+                    "Debit Cash, Credit Expense",
+                    "Debit Expense, Credit Accounts Payable",
+                    "Debit Accounts Payable, Credit Expense"
+                ],
+                answer: "Debit Expense, Credit Accounts Payable",
+                explanation: "Expense (Expense) increases (Debit). Accounts Payable/Creditors (Liability) increases (Credit)."
+            },
+            {
+                question: "The withdrawal of cash by the owner for personal use is recorded by:",
+                options: [
+                    "Debiting Cash, Crediting Drawings",
+                    "Debiting Drawings, Crediting Cash",
+                    "Debiting Capital, Crediting Cash",
+                    "Debiting Expenses, Crediting Cash"
+                ],
+                answer: "Debiting Drawings, Crediting Cash",
+                explanation: "Drawings (deducted from Capital) increases (Debit). Cash (Asset) decreases (Credit)."
+            },
+            {
+                question: "Revenue earned but not yet received in cash affects:",
+                options: ["Assets and Liabilities", "Assets and Capital", "Liabilities and Capital", "Expenses and Assets"],
+                answer: "Assets and Capital",
+                explanation: "Accounts Receivable/Debtors (Asset) increases (Debit). Revenue/Income (increases Profit, thus Capital) increases (Credit)."
+            },
+            {
+                question: "Purchasing goods on credit impacts:",
+                options: ["Assets and Liabilities", "Assets and Capital", "Liabilities and Capital", "Expenses and Assets"],
+                answer: "Assets and Liabilities",
+                explanation: "Inventory/Purchases (Asset) increases (Debit). Accounts Payable/Creditors (Liability) increases (Credit)."
+            },
+            {
+                question: "Returning goods previously purchased on credit to the supplier involves:",
+                options: [
+                    "Debiting Purchases, Crediting Accounts Payable",
+                    "Debiting Accounts Payable, Crediting Purchases Returns",
+                    "Debiting Cash, Crediting Purchases Returns",
+                    "Debiting Purchases Returns, Crediting Cash"
+                ],
+                answer: "Debiting Accounts Payable, Crediting Purchases Returns",
+                explanation: "Accounts Payable/Creditors (Liability) decreases (Debit). Purchases Returns (deducted from Purchases in Trading A/c) increases (Credit)."
+            },
+            {
+                question: "Selling goods for cash results in:",
+                options: [
+                    "Debiting Cash, Crediting Sales",
+                    "Debiting Sales, Crediting Cash",
+                    "Debiting Inventory, Crediting Sales",
+                    "Debiting Cost of Goods Sold, Crediting Inventory"
+                ],
+                answer: "Debiting Cash, Crediting Sales",
+                explanation: "Cash/Bank (Asset) increases (Debit). Sales/Revenue (Income) increases (Credit). (Note: COGS entry is separate for profit calculation)."
+            },
+            {
+                question: "Which of the following is a source document?",
+                options: [
+                    "Trial Balance",
+                    "Balance Sheet",
+                    "Invoice received from a supplier",
+                    "Profit and Loss Account"
+                ],
+                answer: "Invoice received from a supplier",
+                explanation: "Source documents (like invoices, receipts, cheques) provide the original evidence of transactions."
+            },
+            {
+                question: "A purchase invoice received from a supplier is evidence of:",
+                options: [
+                    "An increase in cash",
+                    "An increase in liabilities (if bought on credit)",
+                    "A decrease in expenses",
+                    "An increase in capital"
+                ],
+                answer: "An increase in liabilities (if bought on credit)",
+                explanation: "An invoice typically indicates goods received, increasing inventory (asset) and accounts payable (liability) if not paid immediately."
+            },
+            {
+                question: "Where is the original entry for a cash sale typically recorded?",
+                options: ["Sales Journal", "Purchases Journal", "Cash Book", "General Journal"],
+                answer: "Cash Book",
+                explanation: "The Cash Book records all cash receipts and payments. A cash sale involves receiving cash."
+            },
+            {
+                question: "The Journal proper is used to record:",
+                options: [
+                    "All credit purchases",
+                    "All credit sales",
+                    "Cash transactions",
+                    "Transactions that don't fit into specialized journals or correct errors"
+                ],
+                answer: "Transactions that don't fit into specialized journals or correct errors",
+                explanation: "The General Journal (Journal Proper) is used for opening entries, closing entries, adjusting entries, correcting entries, and transactions not recorded in special journals."
+            },
+            {
+                question: "The Purchases Journal is used to record:",
+                options: [
+                    "All purchases of goods for resale",
+                    "All purchases made on credit",
+                    "All purchases of assets",
+                    "All cash purchases"
+                ],
+                answer: "All purchases made on credit",
+                explanation: "The Purchases Journal (or Day Book) specifically records credit purchases of goods intended for resale."
+            },
+            {
+                question: "The Sales Journal records:",
+                options: [
+                    "All sales of goods",
+                    "All credit sales of goods",
+                    "All cash sales of goods",
+                    "All sales of assets"
+                ],
+                answer: "All credit sales of goods",
+                explanation: "The Sales Journal (or Day Book) records credit sales of goods. Cash sales are recorded in the Cash Book."
+            },
+            {
+                question: "The ledger is:",
+                options: [
+                    "A book of original entry",
+                    "A book containing source documents",
+                    "A book where accounts are maintained and classified",
+                    "A summary of the trial balance"
+                ],
+                answer: "A book where accounts are maintained and classified",
+                explanation: "The Ledger is the principal book of accounts where transactions from the Journal/Books of Prime Entry are posted and classified into individual accounts."
+            },
+            {
+                question: "The process of transferring entries from the journal to the ledger is called:",
+                options: ["Balancing", "Posting", "Casting", "Journalizing"],
+                answer: "Posting",
+                explanation: "Posting is the process of transferring debit and credit entries from the Journal or Subsidiary Books to the respective accounts in the Ledger."
+            },
+            {
+                question: "What is the purpose of balancing an account in the ledger?",
+                options: [
+                    "To ensure the journal entry was correct",
+                    "To determine the net difference (debit or credit balance) in that specific account",
+                    "To close the account permanently",
+                    "To list all transactions chronologically"
+                ],
+                answer: "To determine the net difference (debit or credit balance) in that specific account",
+                explanation: "Balancing involves totaling both sides of a ledger account and finding the difference, which represents the account's balance (Debit or Credit)."
+            },
+            {
+                question: "The Cash Book records transactions related to:",
+                options: [
+                    "Only cash receipts",
+                    "Only cash payments",
+                    "Both cash receipts and cash payments",
+                    "Only bank transactions"
+                ],
+                answer: "Both cash receipts and cash payments",
+                explanation: "The Cash Book is a specialized journal that records all cash inflows (receipts) and outflows (payments)."
+            },
+            {
+                question: "If the total of the debit side of an account exceeds the credit side, the account shows a:",
+                options: ["Credit balance", "Debit balance", "Zero balance", "Negative balance"],
+                answer: "Debit balance",
+                explanation: "When debits are greater than credits in an account, the difference is a Debit Balance."
+            },
+            {
+                question: "A credit balance in a customer's account (Debtor) in the ledger usually indicates:",
+                options: [
+                    "The customer owes money to the business",
+                    "The business owes money to the customer (e.g., advance received)",
+                    "The account has been balanced correctly",
+                    "An error has occurred"
+                ],
+                answer: "The business owes money to the customer (e.g., advance received)",
+                explanation: "Normally, Debtors (customers) have debit balances (amounts owed *to* the business). A credit balance suggests the business owes the customer (like an advance payment)."
+            },
+            {
+                question: "Source documents are important because they:",
+                options: [
+                    "Are used to balance ledger accounts",
+                    "Provide legal evidence of transactions and support entries made in books of accounts",
+                    "Are required for preparing the trial balance",
+                    "Are only needed for tax audits"
+                ],
+                answer: "Provide legal evidence of transactions and support entries made in books of accounts",
+                explanation: "Source documents are the original proof of transactions and are crucial for verification and audit purposes."
+            },
+            {
+                question: "Which book of prime entry is used to record returns *from* customers (sales returns)?",
+                options: ["Purchases Returns Journal", "Sales Returns Journal", "General Journal", "Cash Book"],
+                answer: "Sales Returns Journal",
+                explanation: "The Sales Returns Journal (Returns Inward Journal) records goods returned by customers."
+            },
+            {
+                question: "Which book of prime entry is used to record returns *to* suppliers (purchase returns)?",
+                options: ["Sales Returns Journal", "Purchases Returns Journal", "General Journal", "Cash Book"],
+                answer: "Purchases Returns Journal",
+                explanation: "The Purchases Returns Journal (Returns Outward Journal) records goods returned to suppliers."
+            },
+            {
+                question: "The primary purpose of preparing a Trial Balance is to:",
+                options: [
+                    "Determine the net profit or loss for the period",
+                    "Test the arithmetical accuracy of posting to the ledger",
+                    "Prepare the final accounts directly",
+                    "List all the company's assets and liabilities"
+                ],
+                answer: "Test the arithmetical accuracy of posting to the ledger",
+                explanation: "The Trial Balance checks if total debits equal total credits in the ledger, helping detect certain posting errors."
+            },
+            {
+                question: "If the total of the debit column in the Trial Balance exceeds the credit column, it indicates:",
+                options: [
+                    "The business made a profit",
+                    "The business incurred a loss",
+                    "There might be an error in the ledger postings",
+                    "The business has more assets than liabilities"
+                ],
+                answer: "There might be an error in the ledger postings",
+                explanation: "The Trial Balance should balance (Debits = Credits). A difference indicates a likely error in recording or posting."
+            },
+            {
+                question: "A Trial Balance is prepared:",
+                options: [
+                    "At the beginning of the accounting period",
+                    "After the preparation of final accounts",
+                    "Before the preparation of final accounts",
+                    "Only when requested by auditors"
+                ],
+                answer: "Before the preparation of final accounts",
+                explanation: "The Trial Balance is a working paper prepared after ledger accounts are balanced, serving as the basis for preparing the final accounts (Trading, P&L, Balance Sheet)."
+            },
+            {
+                question: "Which of the following errors would *NOT* cause the Trial Balance to disagree?",
+                options: [
+                    "Posting an amount to the wrong side of an account",
+                    "Omitting a transaction completely from the books",
+                    "Posting a transaction to the correct accounts but with the wrong amount",
+                    "Posting a transaction twice"
+                ],
+                answer: "Omitting a transaction completely from the books",
+                explanation: "Errors of complete omission affect neither the debit nor credit totals of the Trial Balance, so it will still balance (incorrectly)."
+            },
+            {
+                question: "An error where Rs. 500 received from a debtor is credited to the Sales account instead of the Debtor's account is an example of:",
+                options: ["Error of Omission", "Error of Commission", "Error of Principle", "Compensating Error"],
+                answer: "Error of Commission",
+                explanation: "This is posting to the wrong account (Sales instead of Debtor), which is an Error of Commission."
+            },
+            {
+                question: "If a purchase of office equipment for Rs. 2,000 is debited to the Purchases account instead of the Office Equipment account, this is:",
+                options: ["Error of Omission", "Error of Commission", "Error of Principle", "Compensating Error"],
+                answer: "Error of Principle",
+                explanation: "Purchases is for goods bought for resale. Equipment is an asset. Recording an asset purchase as an expense violates the accounting principle of classification, hence an Error of Principle."
+            },
+            {
+                question: "Which item would typically appear in the debit column of a Trial Balance?",
+                options: ["Capital", "Sales", "Accounts Payable", "Cash/Bank"],
+                answer: "Cash/Bank",
+                explanation: "Cash/Bank is an Asset, and asset accounts normally have debit balances, appearing on the debit side of the Trial Balance."
+            },
+            {
+                question: "Which item would typically appear in the credit column of a Trial Balance?",
+                options: ["Drawings", "Purchases", "Accounts Receivable", "Accrued Expenses"],
+                answer: "Accrued Expenses",
+                explanation: "Accrued Expenses are liabilities (amounts owed), and liability accounts normally have credit balances, appearing on the credit side of the Trial Balance."
+            },
+            {
+                question: "The agreement of a Trial Balance indicates:",
+                options: [
+                    "All transactions have been recorded correctly",
+                    "The final accounts will be accurate",
+                    "No errors of principle or omission exist",
+                    "Arithmetical accuracy of ledger posting (to a point)"
+                ],
+                answer: "Arithmetical accuracy of ledger posting (to a point)",
+                explanation: "Agreement only confirms that debits equal credits posted, not the correctness of the underlying transactions or classifications."
+            },
+            {
+                question: "Where are closing stock and accrued income typically shown in relation to the Trial Balance?",
+                options: [
+                    "Included in the Trial Balance totals",
+                    "Shown only in the final accounts, not in the Trial Balance",
+                    "Shown as separate lines in the Trial Balance",
+                    "Ignored completely"
+                ],
+                answer: "Shown only in the final accounts, not in the Trial Balance",
+                explanation: "Closing Stock appears in the Balance Sheet (Asset) and Trading Account. Accrued Income appears in the Balance Sheet (Asset) and Profit & Loss Account. They are typically adjustments made *after* the Trial Balance is extracted."
+            },
+            {
+                question: "The Trading Account is prepared to find out:",
+                options: [
+                    "Net profit or loss for the period",
+                    "Gross profit or loss from buying and selling goods",
+                    "Total expenses for the period",
+                    "Total revenues for the period"
+                ],
+                answer: "Gross profit or loss from buying and selling goods",
+                explanation: "The Trading Account focuses on the core trading activity, calculating Gross Profit (Sales - Cost of Goods Sold)."
+            },
+            {
+                question: "Cost of Goods Sold (COGS) is calculated as:",
+                options: [
+                    "Opening Stock + Purchases + Direct Expenses",
+                    "Opening Stock + Purchases - Closing Stock + Direct Expenses",
+                    "Opening Stock + Purchases + Closing Stock - Direct Expenses",
+                    "Sales - Gross Profit"
+                ],
+                answer: "Opening Stock + Purchases - Closing Stock + Direct Expenses",
+                explanation: "COGS = Opening Stock + Net Purchases (Purchases - Returns) + Direct Expenses (Carriage Inwards, Wages, Factory Rent etc.) - Closing Stock."
+            },
+            {
+                question: "Gross Profit is transferred to:",
+                options: ["The Balance Sheet", "The Profit and Loss Account", "The Trading Account", "The Cash Book"],
+                answer: "The Profit and Loss Account",
+                explanation: "The Gross Profit figure (credit balance) from the Trading Account is transferred to the credit side of the Profit and Loss Account."
+            },
+            {
+                question: "Net Profit is calculated in:",
+                options: ["The Trading Account", "The Profit and Loss Account", "The Balance Sheet", "The Trial Balance"],
+                answer: "The Profit and Loss Account",
+                explanation: "Net Profit = Gross Profit - Operating Expenses + Other Incomes - Other Expenses. This calculation is done in the Profit and Loss Account."
+            },
+            {
+                question: "Which of the following is typically considered a Direct Expense?",
+                options: ["Salaries of office staff", "Rent of office building", "Carriage Inwards (Freight on purchases)", "Advertising"],
+                answer: "Carriage Inwards (Freight on purchases)",
+                explanation: "Direct Expenses are costs directly related to the purchase or production of goods sold. Carriage Inwards is added to the cost of purchases."
+            },
+            {
+                question: "Which of the following is typically considered an Indirect Expense?",
+                options: ["Cost of raw materials", "Wages of factory workers", "Factory rent", "Office rent"],
+                answer: "Office rent",
+                explanation: "Indirect Expenses are costs related to running the business overall, not directly tied to production/sales of specific goods. Office Rent is an administrative expense."
+            },
+            {
+                question: "If opening stock is Rs. 10,000, purchases are Rs. 50,000, purchase returns are Rs. 5,000, carriage inwards is Rs. 2,000, and closing stock is Rs. 15,000, what is the Cost of Goods Sold?",
+                options: ["Rs. 42,000", "Rs. 57,000", "Rs. 52,000", "Rs. 47,000"],
+                answer: "Rs. 42,000",
+                explanation: "COGS = 10,000 (Opening Stock) + (50,000 - 5,000) (Net Purchases) + 2,000 (Carriage Inwards) - 15,000 (Closing Stock) = 42,000."
+            },
+            {
+                question: "Sales returns (returns inward) are deducted from:",
+                options: ["Purchases", "Sales", "Closing Stock", "Gross Profit"],
+                answer: "Sales",
+                explanation: "Sales Returns reduce the total sales revenue. They are deducted from the gross sales figure to get Net Sales."
+            },
+            {
+                question: "Where is the Net Profit figure ultimately transferred?",
+                options: ["Trading Account", "Profit and Loss Account", "Balance Sheet", "Cash Book"],
+                answer: "Balance Sheet",
+                explanation: "The Net Profit (credit balance) calculated in the Profit and Loss Account is transferred to the Capital account in the Balance Sheet, increasing the owner's equity."
+            },
+            {
+                question: "If Gross Profit is Rs. 100,000 and Total Expenses are Rs. 70,000, what is the Net Profit?",
+                options: [
+                    "Rs. 170,000",
+                    "Rs. 30,000",
+                    "Rs. 100,000",
+                    "Cannot be determined without knowing other incomes/expenses"
+                ],
+                answer: "Cannot be determined without knowing other incomes/expenses",
+                explanation: "Net Profit = Gross Profit - Operating Expenses + Other Incomes - Other Expenses. The question only gives Operating Expenses, not other incomes/expenses."
+            },
+            {
+                question: "Depreciation on office equipment is classified as:",
+                options: ["Direct Expense", "Indirect Expense", "Direct Income", "Indirect Income"],
+                answer: "Indirect Expense",
+                explanation: "Depreciation is a non-cash expense related to the use of assets over time. Office equipment depreciation is an administrative expense, hence indirect."
+            },
+            {
+                question: "The Profit and Loss Account is a:",
+                options: ["Real Account", "Personal Account", "Nominal Account", "Valuation Account"],
+                answer: "Nominal Account",
+                explanation: "The P&L Account summarizes Revenues (Incomes) and Expenses (which are Nominal Accounts) for a period, resulting in Profit or Loss."
+            },
+            {
+                question: "Interest received by a business is classified as:",
+                options: ["Direct Expense", "Indirect Expense", "Direct Income", "Indirect Income"],
+                answer: "Indirect Income",
+                explanation: "Interest received is income earned from investments or loans given, not from the main trading activity. It's shown on the credit side of the P&L Account."
+            },
+            {
+                question: "Commission paid to a sales agent is usually classified as:",
+                options: ["Direct Expense", "Indirect Expense", "Direct Income", "Indirect Income"],
+                answer: "Direct Expense",
+                explanation: "While sometimes debated, commission directly related to sales is often considered a Selling Expense, which is a Direct Expense related to generating revenue."
+            },
+            {
+                question: "Closing Stock appears in:",
+                options: [
+                    "Trading Account only",
+                    "Balance Sheet only",
+                    "Both Trading Account (deducted) and Balance Sheet (Asset)",
+                    "Profit and Loss Account only"
+                ],
+                answer: "Both Trading Account (deducted) and Balance Sheet (Asset)",
+                explanation: "Closing Stock is deducted in the Trading Account to calculate COGS. It is also shown as a Current Asset in the Balance Sheet."
+            },
+            {
+                question: "The Balance Sheet is based on which accounting equation?",
+                options: [
+                    "Revenue - Expenses = Profit",
+                    "Assets = Liabilities + Capital",
+                    "Assets + Liabilities = Capital",
+                    "Inflows - Outflows = Change in Cash"
+                ],
+                answer: "Assets = Liabilities + Capital",
+                explanation: "The structure of the Balance Sheet directly reflects this fundamental equation."
+            },
+            {
+                question: "Which of the following is a characteristic of the Balance Sheet?",
+                options: [
+                    "It shows performance over a period",
+                    "It shows financial position at a point in time",
+                    "It records daily transactions",
+                    "It is prepared monthly for management"
+                ],
+                answer: "It shows financial position at a point in time",
+                explanation: "The Balance Sheet presents a snapshot of the business's assets, liabilities, and equity on a specific date (e.g., 31st December)."
+            },
+            {
+                question: "Fixed Assets are typically shown in the Balance Sheet at:",
+                options: [
+                    "Market value",
+                    "Replacement cost",
+                    "Historical cost less accumulated depreciation",
+                    "Net realizable value"
+                ],
+                answer: "Historical cost less accumulated depreciation",
+                explanation: "Fixed Assets are usually recorded at their original cost and depreciated over time. The Balance Sheet shows the Written Down Value (Cost - Accumulated Depreciation)."
+            },
+            {
+                question: "Current Assets include:",
+                options: [
+                    "Land and Buildings",
+                    "Machinery",
+                    "Inventory (Stock) and Accounts Receivable",
+                    "Long-term Investments"
+                ],
+                answer: "Inventory (Stock) and Accounts Receivable",
+                explanation: "Current Assets are expected to be converted into cash or used up within one year. Stock and Debtors fit this definition."
+            },
+            {
+                question: "Current Liabilities include:",
+                options: [
+                    "Long-term Bank Loan",
+                    "Owner's Capital",
+                    "Accounts Payable and Accrued Expenses",
+                    "Prepaid Expenses"
+                ],
+                answer: "Accounts Payable and Accrued Expenses",
+                explanation: "Current Liabilities are obligations due within one year. Creditors and accrued expenses are typical examples."
+            },
+            {
+                question: "Which section of the Balance Sheet lists the funds invested by the owners?",
+                options: ["Assets", "Liabilities", "Capital (Owner's Equity)", "Reserves and Surplus"],
+                answer: "Capital (Owner's Equity)",
+                explanation: "The Capital section (or Owner's Equity for sole traders/partnerships, or Shareholders' Equity for companies) shows the owners' stake in the business."
+            },
+            {
+                question: "If Total Assets are Rs. 500,000 and Total Liabilities are Rs. 200,000, what is the Owner's Equity?",
+                options: ["Rs. 700,000", "Rs. 300,000", "Rs. 200,000", "Rs. 500,000"],
+                answer: "Rs. 300,000",
+                explanation: "Using Assets = Liabilities + Capital -> 500,000 = 200,000 + Capital -> Capital = 300,000."
+            },
+            {
+                question: "Goodwill is classified as:",
+                options: ["Current Asset", "Fixed Asset (Tangible)", "Fixed Asset (Intangible)", "Current Liability"],
+                answer: "Fixed Asset (Intangible)",
+                explanation: "Goodwill is an intangible asset representing the value of a business's reputation, customer base, etc., expected to benefit the business for more than one year."
+            },
+            {
+                question: "Prepaid Rent appearing in the Trial Balance is shown in the Balance Sheet as:",
+                options: ["Current Liability", "Current Asset", "Fixed Asset", "Expense in Profit & Loss Account"],
+                answer: "Current Asset",
+                explanation: "Prepaid Rent represents a future economic benefit (unused rent paid in advance) and is therefore an asset, typically current."
+            },
+            {
+                question: "Outstanding Salaries appearing in the Trial Balance is shown in the Balance Sheet as:",
+                options: ["Current Asset", "Current Liability", "Fixed Liability", "Expense in Profit & Loss Account"],
+                answer: "Current Liability",
+                explanation: "Outstanding Salaries represent an obligation to pay employees for work already performed but not yet paid, making it a current liability."
+            },
+            {
+                question: "Why are adjustments necessary in final accounts?",
+                options: [
+                    "To make the Trial Balance balance",
+                    "To ensure revenues and expenses are recorded in the correct accounting period according to the Matching Principle",
+                    "To increase reported profits",
+                    "To simplify the accounting process"
+                ],
+                answer: "To ensure revenues and expenses are recorded in the correct accounting period according to the Matching Principle",
+                explanation: "Adjustments align with accrual accounting principles, ensuring accurate financial reporting for the specific period."
+            },
+            {
+                question: "Closing Stock is an adjustment that:",
+                options: [
+                    "Increases both assets and expenses",
+                    "Decreases both assets and expenses",
+                    "Increases assets and decreases expenses (COGS)",
+                    "Decreases assets and increases expenses (COGS)"
+                ],
+                answer: "Increases assets and decreases expenses (COGS)",
+                explanation: "Closing Stock is added as an Asset in the Balance Sheet. It is deducted from COGS in the Trading Account, effectively reducing expenses."
+            },
+            {
+                question: "Depreciation charged on fixed assets is an adjustment that:",
+                options: [
+                    "Increases assets and decreases expenses",
+                    "Decreases assets and increases expenses",
+                    "Increases both assets and expenses",
+                    "Decreases both assets and expenses"
+                ],
+                answer: "Decreases assets and increases expenses",
+                explanation: "Depreciation Expense (increases expense) is recorded. Accumulated Depreciation (decreases asset value) is deducted from the asset's cost in the Balance Sheet."
+            },
+            {
+                question: "Outstanding expenses are adjusted by:",
+                options: [
+                    "Debiting the expense account and crediting a liability account",
+                    "Debiting a liability account and crediting the expense account",
+                    "Debiting the expense account and crediting an asset account",
+                    "Debiting an asset account and crediting the expense account"
+                ],
+                answer: "Debiting the expense account and crediting a liability account",
+                explanation: "This recognizes the expense incurred but not yet paid (liability created)."
+            },
+            {
+                question: "Prepaid expenses are adjusted by:",
+                options: [
+                    "Debiting the expense account and crediting an asset account",
+                    "Debiting an asset account and crediting the expense account",
+                    "Debiting the expense account and crediting a liability account",
+                    "Debiting a liability account and crediting the expense account"
+                ],
+                answer: "Debiting an asset account and crediting the expense account",
+                explanation: "This reduces the expense for the period (as part relates to future periods) and creates/recognizes a Prepaid Expense asset."
+            },
+            {
+                question: "Accrued income (earned but not received) is adjusted by:",
+                options: [
+                    "Debiting an asset account and crediting an income account",
+                    "Debiting an income account and crediting an asset account",
+                    "Debiting a liability account and crediting an income account",
+                    "Debiting an income account and crediting a liability account"
+                ],
+                answer: "Debiting an asset account and crediting an income account",
+                explanation: "This recognizes the income earned (increasing income) and the right to receive payment (creating/recognizing an asset like Accrued Income/Debtors)."
+            },
+            {
+                question: "Income received in advance is adjusted by:",
+                options: [
+                    "Debiting an asset account and crediting an income account",
+                    "Debiting an income account and crediting an asset account",
+                    "Debiting a liability account and crediting an income account",
+                    "Debiting an income account and crediting a liability account"
+                ],
+                answer: "Debiting an income account and crediting a liability account",
+                explanation: "This reduces the income recognized for the period (as part relates to future periods) and recognizes the obligation to provide service/goods (liability)."
+            },
+            {
+                question: "Bad debts are adjusted by:",
+                options: [
+                    "Debiting the Bad Debts account and crediting the Debtors account",
+                    "Debiting the Debtors account and crediting the Bad Debts account",
+                    "Debiting the Cash account and crediting the Bad Debts account",
+                    "Debiting the Bad Debts account and crediting the Bank account"
+                ],
+                answer: "Debiting the Bad Debts account and crediting the Debtors account",
+                explanation: "This writes off the uncollectible amount, reducing the asset (Debtors) and recognizing the expense (Bad Debts)."
+            },
+            {
+                question: "Provision for Doubtful Debts is an adjustment based on:",
+                options: [
+                    "Only debts already confirmed as bad",
+                    "A percentage of total debtors or aged analysis",
+                    "The owner's estimate of future sales",
+                    "The amount of cash in hand"
+                ],
+                answer: "A percentage of total debtors or aged analysis",
+                explanation: "The provision is an estimate for potential future bad debts, often calculated as a % of total/specific debtors."
+            },
+            {
+                question: "If Closing Stock is valued at Rs. 25,000, where will this figure appear?",
+                options: [
+                    "Debit side of Trading Account, Credit side of Balance Sheet",
+                    "Credit side of Trading Account, Debit side of Balance Sheet",
+                    "Debit side of Profit & Loss Account, Credit side of Balance Sheet",
+                    "Credit side of Profit & Loss Account, Debit side of Balance Sheet"
+                ],
+                answer: "Credit side of Trading Account, Debit side of Balance Sheet",
+                explanation: "Closing Stock is deducted from COGS (credit side of Trading A/c) and shown as a Current Asset (debit side of Balance Sheet)."
+            },
+            {
+                question: "Goods drawn by the proprietor for personal use should be adjusted by:",
+                options: [
+                    "Debiting Purchases, Crediting Drawings",
+                    "Debiting Drawings, Crediting Purchases",
+                    "Debiting Sales, Crediting Drawings",
+                    "Debiting Drawings, Crediting Sales"
+                ],
+                answer: "Debiting Drawings, Crediting Purchases",
+                explanation: "This removes the goods from business inventory (reduces purchases/stock) and treats it as a withdrawal by the owner (drawings)."
+            },
+            {
+                question: "Goods distributed as free samples should be adjusted by:",
+                options: [
+                    "Debiting Purchases, Crediting Advertising",
+                    "Debiting Advertising/Free Samples, Crediting Purchases",
+                    "Debiting Sales, Crediting Purchases",
+                    "Debiting Drawings, Crediting Purchases"
+                ],
+                answer: "Debiting Advertising/Free Samples, Crediting Purchases",
+                explanation: "This removes the goods from inventory (reduces purchases/stock) and recognizes it as a marketing expense (Advertising/Free Samples)."
+            },
+            {
+                question: "Interest on Capital provided by the owner is an adjustment that:",
+                options: [
+                    "Increases expenses and decreases capital",
+                    "Decreases expenses and increases capital",
+                    "Increases expenses and increases capital",
+                    "Decreases expenses and decreases capital"
+                ],
+                answer: "Increases expenses and increases capital",
+                explanation: "Interest on Capital is treated as an expense for the business (increasing expenses in P&L) and as income for the owner (increasing capital)."
+            },
+            {
+                question: "Interest on Drawings charged to the proprietor is an adjustment that:",
+                options: [
+                    "Increases income and decreases drawings",
+                    "Decreases income and increases drawings",
+                    "Increases income and increases drawings",
+                    "Decreases income and decreases drawings"
+                ],
+                answer: "Increases income and decreases drawings",
+                explanation: "Interest on Drawings is income for the business (increasing income in P&L) and reduces the amount effectively drawn by the owner (decreasing drawings)."
+            },
+            {
+                question: "What is the main purpose of Notes to Accounts?",
+                options: [
+                    "To replace the main financial statements",
+                    "To provide additional details, explanations, and transparency to the figures presented in the main financial statements",
+                    "To list the company's competitors",
+                    "To present the auditor's opinion"
+                ],
+                answer: "To provide additional details, explanations, and transparency to the figures presented in the main financial statements",
+                explanation: "Notes elaborate on accounting policies, break down totals, disclose contingent liabilities, and explain significant events, making the statements clearer."
+            },
+            {
+                question: "Which of the following would most likely be found in the Notes to Accounts?",
+                options: [
+                    "The company's share price graph",
+                    "Detailed breakdown of Fixed Assets (cost, depreciation, net book value)",
+                    "The CEO's personal biography",
+                    "Marketing campaign slogans"
+                ],
+                answer: "Detailed breakdown of Fixed Assets (cost, depreciation, net book value)",
+                explanation: "Notes provide granular details not shown in the main face of the financial statements, like the components of fixed assets."
+            },
+            {
+                question: "The Current Ratio is calculated as:",
+                options: [
+                    "Current Assets / Current Liabilities",
+                    "Current Liabilities / Current Assets",
+                    "Total Assets / Total Liabilities",
+                    "Net Profit / Capital"
+                ],
+                answer: "Current Assets / Current Liabilities",
+                explanation: "The Current Ratio measures a company's ability to pay its short-term debts with its short-term assets."
+            },
+            {
+                question: "What does a Current Ratio of 2:1 generally indicate?",
+                options: [
+                    "The company has twice as many liabilities as assets",
+                    "The company has twice as many current assets as current liabilities",
+                    "The company is making a 2% profit",
+                    "The company is heavily dependent on debt"
+                ],
+                answer: "The company has twice as many current assets as current liabilities",
+                explanation: "A 2:1 ratio means Current Assets are double Current Liabilities, suggesting good short-term liquidity (though context matters)."
+            },
+            {
+                question: "The Quick Ratio (Acid-Test Ratio) is a more stringent measure of liquidity because it excludes:",
+                options: [
+                    "Cash",
+                    "Accounts Receivable",
+                    "Inventory (Stock) and Prepaid Expenses",
+                    "Bank Overdraft"
+                ],
+                answer: "Inventory (Stock) and Prepaid Expenses",
+                explanation: "Quick Ratio = (Current Assets - Inventory - Prepaid Expenses) / Current Liabilities. It focuses on the most liquid assets."
+            },
+            {
+                question: "What is the primary focus of the Cash Flow Statement?",
+                options: [
+                    "Profitability over a period",
+                    "Financial position at a point in time",
+                    "Inflows and outflows of cash during a period",
+                    "Changes in owner's equity"
+                ],
+                answer: "Inflows and outflows of cash during a period",
+                explanation: "The Cash Flow Statement tracks the actual movement of cash, categorized into Operating, Investing, and Financing activities."
+            },
+            {
+                question: "Cash Flow from Operating Activities starts with:",
+                options: ["Total Sales", "Gross Profit", "Net Profit/Loss", "Total Assets"],
+                answer: "Net Profit/Loss",
+                explanation: "The indirect method starts with Net Profit and adjusts for non-cash items and changes in working capital to arrive at cash flow from operations."
+            },
+            {
+                question: "Which of the following is typically classified as a Cash Flow from Investing Activities?",
+                options: [
+                    "Payment of salaries",
+                    "Receipt of interest",
+                    "Purchase of machinery",
+                    "Issue of shares"
+                ],
+                answer: "Purchase of machinery",
+                explanation: "Investing Activities involve the acquisition and disposal of long-term assets. Buying machinery is a cash outflow for investing."
+            },
+            {
+                question: "Which of the following is typically classified as a Cash Flow from Financing Activities?",
+                options: [
+                    "Payment to suppliers",
+                    "Collection from customers",
+                    "Payment of dividends",
+                    "Payment of rent"
+                ],
+                answer: "Payment of dividends",
+                explanation: "Financing Activities relate to changes in the size and composition of the entity's capital structure. Paying dividends is a cash outflow for financing."
+            },
+            {
+                question: "Depreciation expense, while reducing profit, is:",
+                options: ["A cash outflow", "A cash inflow", "A non-cash expense", "Irrelevant to cash flow"],
+                answer: "A non-cash expense",
+                explanation: "Depreciation is an accounting charge for asset usage, not an actual cash payment in the period it's recorded. It's added back in the Cash Flow Statement."
+            },
+            {
+                question: "An increase in Accounts Receivable (Debtors) during the year would:",
+                options: [
+                    "Increase Cash Flow from Operating Activities",
+                    "Decrease Cash Flow from Operating Activities",
+                    "Have no effect on Cash Flow from Operating Activities",
+                    "Increase Cash Flow from Investing Activities"
+                ],
+                answer: "Decrease Cash Flow from Operating Activities",
+                explanation: "An increase in Debtors means less cash was collected from sales than the revenue recognized, so cash flow is lower than profit."
+            },
+            {
+                question: "Capital Reserve is typically created from:",
+                options: [
+                    "Revenue profits",
+                    "Capital profits (like profit on sale of assets above book value)",
+                    "Regular operating expenses",
+                    "Daily sales transactions"
+                ],
+                answer: "Capital profits (like profit on sale of assets above book value)",
+                explanation: "Capital Reserves arise from non-trading, capital-related transactions, not from regular business profits."
+            },
+            {
+                question: "General Reserve is created primarily from:",
+                options: [
+                    "Sale of old furniture",
+                    "Regular business profits",
+                    "Capital introduced by owners",
+                    "Government grants"
+                ],
+                answer: "Regular business profits",
+                explanation: "General Reserve is a Revenue Reserve built up from the profits earned through normal business operations."
+            },
+            {
+                question: "What is the main purpose of creating a General Reserve?",
+                options: [
+                    "To pay for specific future expenses like repairs",
+                    "To strengthen the financial position and meet future uncertainties without a specific purpose",
+                    "To distribute as bonus shares immediately",
+                    "To cover previous years' losses only"
+                ],
+                answer: "To strengthen the financial position and meet future uncertainties without a specific purpose",
+                explanation: "A General Reserve is a flexible fund created from profits for general business needs."
+            },
+            {
+                question: "Which type of share typically carries voting rights?",
+                options: ["Preference Shares", "Equity Shares (Ordinary Shares)", "Debentures", "Bonds"],
+                answer: "Equity Shares (Ordinary Shares)",
+                explanation: "Ordinary/Equity shareholders are the owners of the company and usually have voting rights on company matters."
+            },
+            {
+                question: "Preference Shares usually have priority regarding:",
+                options: [
+                    "Voting rights",
+                    "Management control",
+                    "Payment of Dividend and repayment of capital",
+                    "Access to company information"
+                ],
+                answer: "Payment of Dividend and repayment of capital",
+                explanation: "Preference shareholders receive a fixed dividend before equity shareholders and have priority in receiving capital back if the company is wound up."
+            },
+            {
+                question: "Bonus Shares are issued:",
+                options: [
+                    "For cash, at a premium",
+                    "For cash, at a discount",
+                    "Free of cost, usually from reserves",
+                    "Only to employees"
+                ],
+                answer: "Free of cost, usually from reserves",
+                explanation: "Bonus shares are given to existing shareholders free, capitalizing accumulated profits/reserves."
+            },
+            {
+                question: "Rights Shares are offered:",
+                options: [
+                    "To the general public",
+                    "Only to existing shareholders, usually at a discount",
+                    "Only to employees",
+                    "To creditors"
+                ],
+                answer: "Only to existing shareholders, usually at a discount",
+                explanation: "Rights issues give existing shareholders the first opportunity to buy new shares, often at a price below the market value."
+            },
+            {
+                question: "Sweat Equity Shares are typically issued to:",
+                options: [
+                    "All existing shareholders equally",
+                    "The general public",
+                    "Employees or directors for their non-cash contributions (like intellectual property)",
+                    "Banks for loans"
+                ],
+                answer: "Employees or directors for their non-cash contributions (like intellectual property)",
+                explanation: "Sweat Equity rewards valuable contributions like know-how, intellectual property, or exceptional performance."
+            },
+            {
+                question: "What is the key difference between Equity Shares and Preference Shares regarding dividends?",
+                options: [
+                    "Preference shares have no dividend",
+                    "Equity shares have a fixed dividend rate",
+                    "Preference shares usually have a fixed dividend rate",
+                    "Both have variable dividends"
+                ],
+                answer: "Preference shares usually have a fixed dividend rate",
+                explanation: "Preference shareholders receive a predetermined dividend rate, while equity dividends vary based on profits and board decisions."
+            },
+            {
+                question: "Accumulated profits that are kept in the business and shown in the Balance Sheet under Reserves and Surplus represent:",
+                options: ["Drawings", "Capital introduced", "Retained Earnings", "Prepaid Expenses"],
+                answer: "Retained Earnings",
+                explanation: "Retained Earnings are the portion of net income that is not distributed as dividends but kept within the company to be reinvested or used as reserves."
+            },
+            {
+                question: "Goodwill, Copyrights, and Patents are examples of:",
+                options: ["Current Assets", "Fixed Assets (Tangible)", "Fixed Assets (Intangible)", "Current Liabilities"],
+                answer: "Fixed Assets (Intangible)",
+                explanation: "These lack physical substance but provide long-term economic benefits, classifying them as Intangible Fixed Assets."
+            },
+            {
+                question: "Which of the following is considered a Fictitious Asset?",
+                options: ["Land", "Machinery", "Preliminary Expenses", "Inventory"],
+                answer: "Preliminary Expenses",
+                explanation: "Fictitious Assets represent expenses incurred during the formation of a company that have no realizable value but are written off over time."
+            },
+            {
+                question: "Carriage Inwards (Freight on purchases) is classified as:",
+                options: ["Direct Expense", "Indirect Expense", "Direct Income", "Indirect Income"],
+                answer: "Direct Expense",
+                explanation: "It's directly related to bringing purchased goods to the business location, added to the cost of purchases."
+            },
+            {
+                question: "Carriage Outwards (Delivery expenses) is classified as:",
+                options: ["Direct Expense", "Indirect Expense", "Direct Income", "Indirect Income"],
+                answer: "Indirect Expense",
+                explanation: "It's related to selling/distribution, not directly to the product cost itself. It's a Selling/Distribution Expense."
+            },
+            {
+                question: "The excess of Assets over Liabilities is known as:",
+                options: ["Revenue", "Expense", "Capital (Owner's Equity)", "Liability"],
+                answer: "Capital (Owner's Equity)",
+                explanation: "This is derived directly from the accounting equation: Assets = Liabilities + Capital. Rearranged: Capital = Assets - Liabilities."
+            },
+            {
+                question: "An asset that can be quickly converted into cash without significant loss of value is known as:",
+                options: ["Fixed Asset", "Intangible Asset", "Fictitious Asset", "Liquid Asset"],
+                answer: "Liquid Asset",
+                explanation: "Examples include cash, marketable securities, and accounts receivable."
+            },
+            {
+                question: "The document containing debit and credit columns for recording transactions is known as:",
+                options: ["Ledger", "Trial Balance", "Journal", "Balance Sheet"],
+                answer: "Journal",
+                explanation: "The Journal is the book of original entry where transactions are first recorded in chronological order using debit and credit columns."
+            },
+            {
+                question: "A list of all ledger account balances at a specific date is known as:",
+                options: ["Journal", "Ledger", "Trial Balance", "Chart of Accounts"],
+                answer: "Trial Balance",
+                explanation: "The Trial Balance extracts the closing balances of all ledger accounts to check arithmetical accuracy."
+            },
+            {
+                question: "Which accounting concept assumes that the business will continue operating for the foreseeable future?",
+                options: ["Conservatism", "Consistency", "Going Concern", "Materiality"],
+                answer: "Going Concern",
+                explanation: "The Going Concern concept is fundamental, affecting how assets and liabilities are valued and reported."
+            },
+            {
+                question: "The principle that potential losses should be recognized promptly, but potential gains should not be recognized until realized, is known as:",
+                options: ["Matching", "Conservatism (Prudence)", "Materiality", "Accrual"],
+                answer: "Conservatism (Prudence)",
+                explanation: "This concept leads to understating assets/income and overstating liabilities/expenses when in doubt, presenting a cautious view."
+            },
+            {
+                question: "The business is treated as separate from its owners. This is the:",
+                options: ["Money Measurement Concept", "Business Entity Concept", "Cost Concept", "Dual Aspect Concept"],
+                answer: "Business Entity Concept",
+                explanation: "This concept distinguishes the business's financial activities from the personal financial activities of its owners."
+            },
+            {
+                question: "Transactions are recorded initially at the amount paid or received. This is the:",
+                options: [
+                    "Business Entity Concept",
+                    "Going Concern Concept",
+                    "Cost Concept (Historical Cost Principle)",
+                    "Matching Concept"
+                ],
+                answer: "Cost Concept (Historical Cost Principle)",
+                explanation: "Assets and liabilities are recorded at their original transaction value, not necessarily current market value."
+            },
+            {
+                question: "Revenues are recognized when earned, and expenses when incurred, regardless of cash receipt or payment. This is the:",
+                options: ["Cash Basis Concept", "Accrual Concept", "Consistency Concept", "Materiality Concept"],
+                answer: "Accrual Concept",
+                explanation: "Accrual accounting provides a more accurate picture of performance and position than cash basis for most businesses."
+            },
+            {
+                question: "All expenses incurred to earn revenue in a specific period should be matched with that period's revenue. This is the:",
+                options: [
+                    "Business Entity Concept",
+                    "Matching Concept",
+                    "Cost Concept",
+                    "Conservatism Concept"
+                ],
+                answer: "Matching Concept",
+                explanation: "This ensures that the profit reported for a period reflects the results of activities *during* that period."
+            },
+            {
+                question: "Only transactions that can be expressed in monetary terms are recorded in the books of accounts. This is the:",
+                options: [
+                    "Business Entity Concept",
+                    "Money Measurement Concept",
+                    "Cost Concept",
+                    "Dual Aspect Concept"
+                ],
+                answer: "Money Measurement Concept",
+                explanation: "This concept defines the scope of what is included in financial accounting records."
+            }
+        ];
+
+        // DOM Elements
+        const quizContainer = document.getElementById('quiz');
+        const resultContainer = document.getElementById('result');
+        const questionCountElement = document.getElementById('question-count');
+        const questionTextElement = document.getElementById('question-text');
+        const answersElement = document.getElementById('answers');
+        const explanationElement = document.getElementById('explanation');
+        const explanationTextElement = document.getElementById('explanation-text');
+        const correctAnswerTextElement = document.getElementById('correct-answer-text');
+        const prevButton = document.getElementById('prev-btn');
+        const nextButton = document.getElementById('next-btn');
+        const submitButton = document.getElementById('submit-btn');
+        const restartButton = document.getElementById('restart-btn');
+        const scoreElement = document.getElementById('score');
+        const feedbackElement = document.getElementById('feedback');
+        const correctAnswersElement = document.getElementById('correct-answers');
+        const totalAnsweredElement = document.getElementById('total-answered');
+        const totalQuestionsElement = document.getElementById('total-questions');
+        const questionsToAttemptElement = document.getElementById('questions-to-attempt');
+
+        // Quiz State
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let selectedQuestions = [];
+        const numberOfQuestions = 10; // Number of questions to attempt
+
+        // Initialize Quiz
+        function initQuiz() {
+            // Shuffle and select questions
+            const shuffledQuestions = [...quizData].sort(() => 0.5 - Math.random());
+            selectedQuestions = shuffledQuestions.slice(0, numberOfQuestions);
+
+            // Update info
+            totalQuestionsElement.textContent = quizData.length;
+            questionsToAttemptElement.textContent = numberOfQuestions;
+
+            // Initialize user answers array
+            userAnswers = new Array(selectedQuestions.length).fill(null);
+
+            // Show first question
+            showQuestion(currentQuestionIndex);
+        }
+
+        // Show a question
+        function showQuestion(index) {
+            const question = selectedQuestions[index];
+            questionCountElement.textContent = `Question ${index + 1} of ${selectedQuestions.length}`;
+            questionTextElement.textContent = question.question;
+
+            // Clear previous answers
+            answersElement.innerHTML = '';
+
+            // Create answer buttons
+            question.options.forEach((option, i) => {
+                const button = document.createElement('button');
+                button.classList.add('answer-item');
+                button.textContent = option;
+                if (userAnswers[index] === option) {
+                    button.classList.add('selected');
+                }
+                button.addEventListener('click', () => selectAnswer(option, button));
+                answersElement.appendChild(button);
+            });
+
+            // Update button states
+            prevButton.disabled = index === 0;
+            if (index === selectedQuestions.length - 1) {
+                nextButton.style.display = 'none';
+                submitButton.style.display = 'block';
+            } else {
+                nextButton.style.display = 'block';
+                submitButton.style.display = 'none';
+            }
+
+            // Hide explanation initially
+            explanationElement.classList.remove('show');
+        }
+
+        // Select an answer
+        function selectAnswer(answer, button) {
+            // Deselect all buttons
+            document.querySelectorAll('.answer-item').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            // Select clicked button
+            button.classList.add('selected');
+            userAnswers[currentQuestionIndex] = answer;
+
+            // Show explanation immediately after selection
+            showExplanation();
+        }
+
+        // Show explanation for the current question
+        function showExplanation() {
+            const question = selectedQuestions[currentQuestionIndex];
+            const userAnswer = userAnswers[currentQuestionIndex];
+            const isCorrect = userAnswer === question.answer;
+
+            explanationTextElement.textContent = question.explanation;
+            
+            if (userAnswer) {
+                if (isCorrect) {
+                    correctAnswerTextElement.innerHTML = `<span class="correct-answer">Your answer was correct!</span>`;
+                } else {
+                    correctAnswerTextElement.innerHTML = `Your answer: <span class="incorrect-answer">${userAnswer}</span><br>`;
+                    correctAnswerTextElement.innerHTML += `Correct answer: <span class="correct-answer">${question.answer}</span>`;
+                }
+            } else {
+                correctAnswerTextElement.innerHTML = `You didn't answer this question.<br>`;
+                correctAnswerTextElement.innerHTML += `Correct answer: <span class="correct-answer">${question.answer}</span>`;
+            }
+
+            explanationElement.classList.add('show');
+        }
+
+        // Move to next question
+        function nextQuestion() {
+            if (currentQuestionIndex < selectedQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Move to previous question
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion(currentQuestionIndex);
+            }
+        }
+
+        // Submit quiz
+        function submitQuiz() {
+            // Calculate score
+            let score = 0;
+            let answeredCount = 0;
+
+            selectedQuestions.forEach((question, index) => {
+                if (userAnswers[index] !== null) {
+                    answeredCount++;
+                    if (userAnswers[index] === question.answer) {
+                        score++;
+                    }
+                }
+            });
+
+            // Display results
+            quizContainer.style.display = 'none';
+            resultContainer.style.display = 'block';
+
+            scoreElement.textContent = `${score}/${selectedQuestions.length}`;
+            correctAnswersElement.textContent = score;
+            totalAnsweredElement.textContent = answeredCount;
+
+            // Provide feedback
+            const percentage = selectedQuestions.length > 0 ? (score / selectedQuestions.length) * 100 : 0;
+            let feedback = '';
+            if (percentage >= 80) {
+                feedback = 'Excellent! You have a strong grasp of accounting fundamentals.';
+            } else if (percentage >= 60) {
+                feedback = 'Good job! You understand the basics well.';
+            } else if (percentage >= 40) {
+                feedback = 'Not bad, but review the concepts to improve.';
+            } else {
+                feedback = 'Keep studying! Review the material and try again.';
+            }
+            feedbackElement.textContent = feedback;
+        }
+
+        // Restart quiz
+        function restartQuiz() {
+            resultContainer.style.display = 'none';
+            quizContainer.style.display = 'block';
+            currentQuestionIndex = 0;
+            initQuiz();
+        }
+
+        // Event Listeners
+        nextButton.addEventListener('click', nextQuestion);
+        prevButton.addEventListener('click', prevQuestion);
+        submitButton.addEventListener('click', submitQuiz);
+        restartButton.addEventListener('click', restartQuiz);
+
+        // Start the quiz
+        initQuiz();
+    </script>
+</body>
+</html>
