@@ -270,11 +270,11 @@
 
         <div class="quiz-info">
             <div>Total Questions: <span id="total-questions">150</span></div>
-            <div>Questions to Attempt: <span id="questions-to-attempt">10</span></div>
+            <div>Questions to Attempt: <span id="questions-to-attempt">150</span></div>
         </div>
 
         <main class="quiz-container" id="quiz">
-            <div class="question-count" id="question-count">Question 1 of 10</div>
+            <div class="question-count" id="question-count">Question 1 of 150</div>
             <div class="question-text" id="question-text">Loading question...</div>
             
             <div class="answers" id="answers">
@@ -1700,7 +1700,7 @@
         let currentQuestionIndex = 0;
         let userAnswers = [];
         let selectedQuestions = [];
-        const numberOfQuestions = 10; // Number of questions to attempt
+        const numberOfQuestions = 150; // Number of questions to attempt
 
         // Initialize Quiz
         function initQuiz() {
